@@ -151,9 +151,305 @@ label span {
 
 .workspace {
   display: grid;
-  grid-template-columns: 290px 1fr;
+  grid-template-columns: minmax(320px, 380px) 1fr;
   gap: 20px;
   margin-bottom: 20px;
+}
+
+.side {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+
+.records {
+  margin-bottom: 20px;
+}
+
+.panel-hint {
+  color: #526070;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #ffffff;
+  color: #172033;
+  font: inherit;
+}
+
+/* 设备台账 */
+.device-list {
+  display: grid;
+  gap: 10px;
+}
+
+.device-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #fbfdff;
+}
+
+.device-card h3 {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.device-card p {
+  margin-bottom: 0;
+  color: #526070;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.device-expired {
+  border-color: color-mix(in srgb, var(--warn) 45%, var(--border));
+  background: color-mix(in srgb, var(--warn) 5%, #ffffff);
+}
+
+.renew-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.renew-row input {
+  width: auto;
+  min-height: 38px;
+}
+
+.tag {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+.tag-ok {
+  color: #047857;
+  background: #d1fae5;
+}
+
+.tag-warn {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.tag-danger {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+/* 患者档案表单 */
+.patient-form {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 14px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+/* 录入区 */
+.entry-form {
+  display: grid;
+  gap: 14px;
+}
+
+.reading-rows {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.reading-head,
+.reading-row {
+  display: grid;
+  grid-template-columns: 56px repeat(3, 1fr);
+  gap: 0;
+}
+
+.reading-head span {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #64748b;
+  background: #f1f5f9;
+  border-right: 1px solid var(--border);
+}
+
+.reading-head span:last-child {
+  border-right: none;
+}
+
+.reading-row .reading-no {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #526070;
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  background: #fbfdff;
+}
+
+.reading-row input {
+  border: none;
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-radius: 0;
+  min-width: 0;
+}
+
+.reading-row input:last-child {
+  border-right: none;
+}
+
+.judge-preview {
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.judge-preview ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.judge-pass {
+  color: #065f46;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.judge-block {
+  color: #991b1b;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.form-error {
+  color: var(--warn);
+  margin-bottom: 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.note-input {
+  flex: 1;
+  min-width: 180px;
+  width: auto;
+  min-height: 38px;
+}
+
+/* 质控卡片 */
+.qc-pending {
+  grid-template-columns: 56px 1fr;
+  border-left: 4px solid #d97706;
+}
+
+.qc-issued {
+  grid-template-columns: 56px 1fr;
+  border-left: 4px solid var(--accent);
+}
+
+.record-body > p {
+  margin-bottom: 8px;
+}
+
+.record-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.record-head h3 {
+  margin-bottom: 0;
+}
+
+.record-index.locked {
+  background: var(--accent);
+}
+
+.final-rx {
+  font-weight: 600;
+}
+
+.lock-hint {
+  font-size: 13px;
+  color: #047857;
+}
+
+.fail-list {
+  margin: 6px 0;
+  padding-left: 20px;
+  color: #b91c1c;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.review-note {
+  font-size: 13px;
+  color: #047857;
+}
+
+.version-history {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.version-history summary {
+  cursor: pointer;
+  color: #64748b;
+}
+
+.version-item {
+  border-top: 1px dashed var(--border);
+  padding: 10px 0;
+}
+
+.version-item header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #526070;
+  margin-bottom: 4px;
+}
+
+.version-item p {
+  margin-bottom: 4px;
+  color: #334155;
+}
+
+@media (max-width: 860px) {
+  .hero,
+  .workspace,
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .panel {
@@ -254,20 +550,7 @@ input {
   margin-bottom: 6px;
 }
 
-.record-card p {
-  margin-bottom: 0;
+.record-card .record-body > p {
   color: #526070;
   line-height: 1.6;
-}
-
-@media (max-width: 860px) {
-  .hero,
-  .workspace,
-  .metrics-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .field-grid {
-    grid-template-columns: 1fr;
-  }
 }
