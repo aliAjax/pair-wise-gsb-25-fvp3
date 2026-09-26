@@ -271,3 +271,555 @@ input {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- 质控工作台扩展样式 ---------- */
+
+:root {
+  --ok-bg: #ecfdf5;
+  --ok-fg: #047857;
+  --bad-bg: #fef2f2;
+  --bad-fg: #b91c1c;
+  --wait-bg: #fffbeb;
+  --wait-fg: #b45309;
+}
+
+.rule-tag {
+  font-size: 12px;
+  color: var(--warn);
+  border: 1px dashed color-mix(in srgb, var(--warn) 45%, var(--border));
+  border-radius: 6px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.mini {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.primary-action.mini {
+  color: #fff;
+}
+
+/* 设备台账 */
+.device-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.device-alert {
+  background: var(--bad-bg);
+  color: var(--bad-fg);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.device-form {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 14px;
+  background: #fbfdff;
+}
+
+.device-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.device-item {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fbfdff;
+}
+
+.device-item.cal-expired,
+.device-item.cal-due_today {
+  border-left-color: var(--warn);
+  background: var(--bad-bg);
+}
+
+.device-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.device-name {
+  display: block;
+  color: #526070;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.device-meta {
+  font-size: 12px;
+  color: #526070;
+  margin-top: 6px;
+}
+
+.device-meta em {
+  color: var(--primary);
+  font-style: normal;
+}
+
+.renew-btn {
+  margin-top: 8px;
+  border-color: color-mix(in srgb, var(--warn) 40%, var(--border));
+  color: var(--warn);
+}
+
+.renew-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.renew-box input[type="date"] {
+  width: auto;
+  min-height: 32px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.badge.cal-ok {
+  background: var(--ok-bg);
+  color: var(--ok-fg);
+}
+
+.badge.cal-expired,
+.badge.cal-due_today {
+  background: var(--bad-bg);
+  color: var(--bad-fg);
+}
+
+.badge.cal-unknown {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* 录入区 */
+.patient-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.eye-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.eye-toggle button {
+  min-height: 42px;
+}
+
+.eye-toggle button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.reading-form {
+  display: grid;
+  gap: 12px;
+}
+
+.device-select select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #fff;
+}
+
+.cal-hint {
+  font-style: normal;
+  font-size: 12px;
+}
+
+.cal-hint.cal-ok {
+  color: var(--ok-fg);
+}
+
+.cal-hint.cal-expired,
+.cal-hint.cal-due_today {
+  color: var(--bad-fg);
+  font-weight: 700;
+}
+
+.attempt-table-wrap {
+  overflow-x: auto;
+}
+
+.attempt-table,
+.reading-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.attempt-table th,
+.attempt-table td,
+.reading-table th,
+.reading-table td {
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.attempt-table th,
+.reading-table th {
+  background: #f1f5fb;
+  font-weight: 700;
+  color: #334155;
+}
+
+.attempt-no {
+  background: #f8fafc;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.live-check {
+  font-size: 13px;
+  color: #526070;
+}
+
+.live-check .good {
+  color: var(--ok-fg);
+}
+
+.live-check .bad {
+  color: var(--bad-fg);
+}
+
+.warn-text,
+.form-error {
+  color: var(--bad-fg);
+}
+
+.form-error {
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* 档案卡片 */
+.filter-chips {
+  margin: 0 0 16px;
+}
+
+.chips button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.search-box {
+  width: min(320px, 100%);
+  min-height: 38px;
+}
+
+.case-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  background: #fbfdff;
+  display: grid;
+  gap: 14px;
+}
+
+.case-card.status-in_review {
+  border-left: 5px solid var(--warn);
+}
+
+.case-card.status-approved {
+  border-left: 5px solid #d97706;
+}
+
+.case-card.status-prescribed {
+  border-left: 5px solid var(--accent);
+}
+
+.case-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+}
+
+.case-head h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+
+.patient-id {
+  color: #526070;
+  font-weight: 400;
+  font-size: 14px;
+  margin-left: 6px;
+}
+
+.eye-tag,
+.version-tag {
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-left: 8px;
+  background: #eff6ff;
+  color: var(--primary);
+}
+
+.version-tag {
+  background: #f0fdf4;
+  color: var(--ok-fg);
+}
+
+.case-sub {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.case-sub em {
+  font-style: normal;
+  color: var(--primary);
+}
+
+.status-badge-in_review {
+  background: var(--bad-bg);
+  color: var(--bad-fg);
+}
+
+.status-badge-approved {
+  background: var(--wait-bg);
+  color: var(--wait-fg);
+}
+
+.status-badge-prescribed {
+  background: var(--ok-bg);
+  color: var(--ok-fg);
+}
+
+.rx-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: var(--ok-bg);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.rx-box span,
+.rx-box em {
+  display: block;
+  font-size: 12px;
+  color: var(--ok-fg);
+  font-style: normal;
+}
+
+.rx-box strong {
+  display: block;
+  font-size: 20px;
+  margin: 4px 0;
+  color: #064e3b;
+}
+
+.attempt-history {
+  display: grid;
+  gap: 10px;
+}
+
+.attempt-block {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.attempt-block.pass {
+  background: #f6fdf9;
+}
+
+.attempt-block.fail {
+  background: var(--bad-bg);
+}
+
+.attempt-block.latest {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.attempt-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #334155;
+  flex-wrap: wrap;
+}
+
+.old-tag {
+  font-style: normal;
+  font-size: 12px;
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.reading-table {
+  margin-top: 8px;
+  background: #fff;
+}
+
+.qc-detail {
+  font-size: 12px;
+  color: #526070;
+  margin-top: 8px;
+}
+
+.reasons {
+  margin: 6px 0 0;
+  padding-left: 4px;
+  list-style: none;
+  display: grid;
+  gap: 3px;
+  color: var(--bad-fg);
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  color: var(--primary);
+  padding: 0;
+  min-height: 0;
+  text-align: left;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.block-notice {
+  margin: 0;
+  background: var(--bad-bg);
+  color: var(--bad-fg);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.case-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ok-hint {
+  color: var(--ok-fg);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.event-log summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: #526070;
+}
+
+.event-log ol {
+  margin: 8px 0 0;
+  padding-left: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.event-log li {
+  font-size: 13px;
+  color: #334155;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.event-log li em {
+  font-style: normal;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.event-kind {
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 7px;
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.event-kind-prescribe,
+.event-kind-review {
+  background: var(--ok-bg);
+  color: var(--ok-fg);
+}
+
+.event-kind-retest,
+.event-kind-version {
+  background: #eff6ff;
+  color: var(--primary);
+}
+
+.empty-hint {
+  color: #64748b;
+  padding: 12px 4px;
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .patient-row {
+    grid-template-columns: 1fr;
+  }
+
+  .rule-tag {
+    white-space: normal;
+  }
+}

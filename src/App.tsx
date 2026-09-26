@@ -1,156 +1,175 @@
+import { useMemo, useState } from "react";
 import "./styles.css";
+import type { Eye } from "./types";
+import { useDB } from "./store/useDB";
+import { submitCase } from "./store/db";
+import { DevicePanel } from "./components/DevicePanel";
+import { CaseCard } from "./components/CaseCard";
+import { ReadingGrid } from "./components/ReadingGrid";
 
-const project = {
-  "id": "hxwl-11",
-  "port": 5111,
-  "title": "眼科验光记录",
-  "subtitle": "视力、屈光参数与复查处方对比",
-  "stack": "React + Vite + TypeScript + CSS",
-  "theme": [
-    "#2563eb",
-    "#059669",
-    "#dc2626"
-  ],
-  "domain": "眼视光",
-  "users": [
-    "验光师",
-    "门店顾问",
-    "复查医生"
-  ],
-  "metrics": [
-    "近视进展",
-    "散光变化",
-    "复查提醒",
-    "处方数量"
-  ],
-  "filters": [
-    "儿童",
-    "成人",
-    "渐进片",
-    "角膜塑形镜"
-  ],
-  "fields": [
-    "裸眼视力",
-    "矫正视力",
-    "球镜",
-    "柱镜",
-    "轴位",
-    "瞳距",
-    "角膜曲率"
-  ],
-  "records": [
-    [
-      "Patient-032",
-      "儿童近视",
-      "复查",
-      "右眼-2.75DS，轴位180"
-    ],
-    [
-      "Patient-081",
-      "渐进片",
-      "初配",
-      "ADD +1.50，瞳高待确认"
-    ],
-    [
-      "Patient-144",
-      "散光",
-      "复查",
-      "柱镜变化0.50D"
-    ]
-  ]
-};
+type FilterKey = "all" | "in_review" | "approved" | "prescribed";
 
-const statusColors = ["status-ok", "status-watch", "status-danger"];
+const FILTERS: { key: FilterKey; label: string }[] = [
+  { key: "all", label: "全部" },
+  { key: "in_review", label: "待复核" },
+  { key: "approved", label: "可出方" },
+  { key: "prescribed", label: "已出方锁定" },
+];
 
-function MetricCard({ label, value, index }: { label: string; value: string; index: number }) {
+function NewCasePanel({ devices }: { devices: ReturnType<typeof useDB>["devices"] }) {
+  const [patientId, setPatientId] = useState("");
+  const [patientName, setPatientName] = useState("");
+  const [eye, setEye] = useState<Eye>("OD");
+  const [error, setError] = useState<string | null>(null);
+
   return (
-    <article className="metric-card">
-      <span>{label}</span>
-      <strong>{value}</strong>
-      <i className={statusColors[index % statusColors.length]} />
-    </article>
+    <section className="panel">
+      <div className="section-heading">
+        <div>
+          <p>三次测量 · 质控判定</p>
+          <h2>验光录入</h2>
+        </div>
+        <span className="rule-tag">轴位跨度 &gt; 5° 或校准到期 → 待复核，不能出方</span>
+      </div>
+
+      <div className="patient-row">
+        <label>
+          <span>患者编号</span>
+          <input value={patientId} placeholder="如 Patient-201" onChange={(e) => setPatientId(e.target.value)} />
+        </label>
+        <label>
+          <span>患者姓名</span>
+          <input value={patientName} placeholder="选填" onChange={(e) => setPatientName(e.target.value)} />
+        </label>
+        <label className="eye-field">
+          <span>眼别</span>
+          <div className="eye-toggle">
+            {(["OD", "OS"] as Eye[]).map((e) => (
+              <button
+                key={e}
+                type="button"
+                className={eye === e ? "active" : ""}
+                onClick={() => setEye(e)}
+              >
+                {e === "OD" ? "右眼 OD" : "左眼 OS"}
+              </button>
+            ))}
+          </div>
+        </label>
+      </div>
+
+      <ReadingGrid
+        devices={devices}
+        submitLabel="录入并质控判定"
+        onSubmit={({ deviceId, readings }) => {
+          if (!patientId.trim()) {
+            setError("请填写患者编号");
+            return;
+          }
+          setError(null);
+          submitCase({ patientId, patientName, eye, deviceId, readings });
+          setPatientId("");
+          setPatientName("");
+        }}
+      />
+      {error && <p className="form-error">{error}</p>}
+    </section>
   );
 }
 
 function App() {
-  const values = project.metrics.map((metric: string, index: number) => {
-    const base = [84, 12, 31, 7][index % 4];
-    return String(base + index * 3);
-  });
+  const db = useDB();
+  const [filter, setFilter] = useState<FilterKey>("all");
+  const [keyword, setKeyword] = useState("");
+
+  const metrics = useMemo(() => {
+    const inReview = db.cases.filter((c) => c.status === "in_review").length;
+    const approved = db.cases.filter((c) => c.status === "approved").length;
+    const prescribed = db.cases.filter((c) => c.status === "prescribed").length;
+    const expiredDevices = db.devices.filter(
+      (d) => d.calibrationExpiry <= new Date().toISOString().slice(0, 10)
+    ).length;
+    return [
+      { label: "待复核档案", value: String(inReview), cls: "status-danger" },
+      { label: "可出方", value: String(approved), cls: "status-watch" },
+      { label: "已锁定处方", value: String(prescribed), cls: "status-ok" },
+      { label: "设备到期/过期", value: String(expiredDevices), cls: expiredDevices ? "status-danger" : "status-ok" },
+    ];
+  }, [db]);
+
+  const cases = useMemo(() => {
+    const kw = keyword.trim().toLowerCase();
+    return db.cases
+      .filter((c) => (filter === "all" ? true : c.status === filter))
+      .filter((c) =>
+        kw
+          ? c.patientId.toLowerCase().includes(kw) ||
+            c.patientName.toLowerCase().includes(kw) ||
+            c.id.toLowerCase().includes(kw)
+          : true
+      )
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  }, [db, filter, keyword]);
 
   return (
     <main className="app-shell">
       <section className="hero">
         <div>
-          <p className="eyebrow">{project.id} · port {project.port}</p>
-          <h1>{project.title}</h1>
-          <p className="subtitle">{project.subtitle}</p>
+          <p className="eyebrow">hxwl-11 · 验光质控工作台</p>
+          <h1>验光记录 × 设备校准质控</h1>
+          <p className="subtitle">
+            按患者与眼别录入三次球镜、柱镜、轴位及设备编号。仪器校准到期或三次轴位跨度超过
+            5° 时先存待复核，续期并重测后方可复核出方；原读数与失败原因全程保留，出方值锁定，改动另开版本。数据保存在本机，关闭再打开仍可查询。
+          </p>
         </div>
         <div className="stack-card">
-          <span>技术栈</span>
-          <strong>{project.stack}</strong>
+          <span>质控流转</span>
+          <strong>录入判定 → 待复核 → 续期重测 → 复核 → 出方锁定 → 另开版本</strong>
         </div>
       </section>
 
       <section className="metrics-grid">
-        {project.metrics.map((metric: string, index: number) => (
-          <MetricCard key={metric} label={metric} value={values[index]} index={index} />
+        {metrics.map((m) => (
+          <article key={m.label} className="metric-card">
+            <span>{m.label}</span>
+            <strong>{m.value}</strong>
+            <i className={m.cls} />
+          </article>
         ))}
       </section>
 
       <section className="workspace">
         <aside className="panel narrow">
-          <h2>角色</h2>
-          <div className="chips">
-            {project.users.map((user: string) => (
-              <span key={user}>{user}</span>
-            ))}
-          </div>
-          <h2>筛选</h2>
-          <div className="chips muted">
-            {project.filters.map((filter: string) => (
-              <button key={filter}>{filter}</button>
-            ))}
-          </div>
+          <DevicePanel devices={db.devices} />
         </aside>
-
-        <section className="panel">
-          <div className="section-heading">
-            <div>
-              <p>{project.domain}</p>
-              <h2>记录字段</h2>
-            </div>
-            <button className="primary-action">新增记录</button>
-          </div>
-          <div className="field-grid">
-            {project.fields.map((field: string) => (
-              <label key={field}>
-                <span>{field}</span>
-                <input placeholder={"填写" + field} />
-              </label>
-            ))}
-          </div>
-        </section>
+        <NewCasePanel devices={db.devices} />
       </section>
 
       <section className="records panel">
         <div className="section-heading">
           <div>
-            <p>示例数据</p>
-            <h2>近期记录</h2>
+            <p>本机档案（localStorage 持久化）</p>
+            <h2>验光档案</h2>
           </div>
-          <button>导出摘要</button>
+          <input
+            className="search-box"
+            placeholder="搜索患者编号 / 姓名 / 档案号"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+        </div>
+        <div className="chips muted filter-chips">
+          {FILTERS.map((f) => (
+            <button key={f.key} className={filter === f.key ? "active" : ""} onClick={() => setFilter(f.key)}>
+              {f.label}
+            </button>
+          ))}
         </div>
         <div className="record-list">
-          {project.records.map((record: string[], index: number) => (
-            <article key={record.join("-")} className="record-card">
-              <div className="record-index">{String(index + 1).padStart(2, "0")}</div>
-              <div>
-                <h3>{record[0]}</h3>
-                <p>{record.slice(1).join(" · ")}</p>
-              </div>
-            </article>
+          {cases.map((c) => (
+            <CaseCard key={c.id} examCase={c} devices={db.devices} />
           ))}
+          {cases.length === 0 && <p className="empty-hint">没有符合条件的档案</p>}
         </div>
       </section>
     </main>
